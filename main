@@ -1,0 +1,126 @@
+local library = loadstring(game:HttpGet('https://raw.githubusercontent.com/jakepscripts/moonlib/main/moonlibv1.lua'))() 
+local main = library:CreateWindow("Tutorial", "#19cf83", 9160626035)
+
+main:CreateTab("Home")
+
+main:CreateLabel("Cool Testing", "Home")
+
+main:CreateButton("DISTANCE + NAME ESP", "Home", function()
+print('btn')
+local c = workspace.CurrentCamera
+local ps = game:GetService("Players")
+local lp = ps.LocalPlayer
+local rs = game:GetService("RunService")
+
+local function getdistancefc(part)
+    return (part.Position - c.CFrame.Position).Magnitude
+end
+
+local function esp(p,cr)
+    local h = cr:WaitForChild("Humanoid")
+    local hrp = cr:WaitForChild("HumanoidRootPart")
+
+    local text = Drawing.new("Text")
+    text.Visible = false
+    text.Center = true 
+    text.Outline = true 
+    text.Font = 2
+    text.Color = Color3.fromRGB(255,0,0)
+    text.Size = 15
+
+    local c1 
+    local c2 
+    local c3 
+
+    local function dc()
+        text.Visible = false
+        text:Remove()
+        if c1 then
+            c1:Disconnect()
+            c1 = nil 
+        end
+        if c2 then
+            c2:Disconnect()
+            c2 = nil 
+        end
+        if c3 then
+            c3:Disconnect()
+            c3 = nil 
+        end
+    end
+
+    c2 = cr.AncestryChanged:Connect(function(_,parent)
+        if not parent then
+            dc()
+        end
+    end)
+
+    c3 = h.HealthChanged:Connect(function(v)
+        if (v<=0) or (h:GetState() == Enum.HumanoidStateType.Dead) then
+            dc()
+        end
+    end)
+
+    c1 = rs.RenderStepped:Connect(function()
+        local hrp_pos,hrp_os = c:WorldToViewportPoint(hrp.Position)
+        if hrp_os then
+            text.Position = Vector2.new(hrp_pos.X,hrp_pos.Y)
+            text.Text = p.Name .. ' ('..tostring(math.floor(getdistancefc(hrp)))..' ms)'
+            text.Visible = true 
+        else
+            text.Visible = false 
+        end
+    end)
+end
+
+local function p_added(p)
+    if p.Character then
+        esp(p,p.Character)
+    end
+    p.CharacterAdded:Connect(function(cr)
+        esp(p,cr)
+    end)
+end
+
+
+for i,p in next, ps:GetPlayers() do 
+    if p ~= lp then
+        p_added(p)
+    end
+end
+
+ps.PlayerAdded:Connect(p_added)
+end)
+
+main:CreateButton("Weird Float reset to disable", "Home", function()
+    print('btn')
+    Float_Height = "5" -- Your float height | 5 is default
+ 
+local i=1
+G=game;
+_=wait;
+p=G:GetService("Players").LocalPlayer.Character
+p:FindFirstChild("Humanoid").HipHeight = Float_Height
+_(1.5);
+t=.4;
+n=2;
+for i=1,i do
+repeat p:FindFirstChild("Humanoid").HipHeight=Float_Height-n _(t)p:FindFirstChild("Humanoid").HipHeight=Float_Height+n _(t) until
+p:FindFirstChild("Humanoid").Health == 0
+end
+end)
+
+main:CreateButton("Walkspeed Universal", "Home", function()
+    print('btn')
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 32
+    end)
+
+    main:CreateButton("Infinite Jump LOL", "Home", function()
+        print('btn')
+        local InfiniteJumpEnabled = true
+        game:GetService("UserInputService").JumpRequest:connect(function()
+            if InfiniteJumpEnabled then
+                game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
+            end
+        end)
+        end)
